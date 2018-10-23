@@ -3,11 +3,11 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-if [ -z "$1" ] || [ -z "$2" ]
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]
 then
     echo "Please specify how many random products would you like to generate, and what filename should be used" 1>&2
-    echo "example: ${bold}./wooproductgen.sh 30 woo${normal}" 1>&2
-    echo "This will generate ${bold}30${normal} random random products in a file called ${bold}woo.csv${normal}" 1>&2
+    echo "example: ${bold}./wooproductgen.sh 30 250 woo${normal}" 1>&2
+    echo "This will generate ${bold}30${normal} random random products with a description of ${bold}250${normal} in a file called ${bold}woo.csv${normal}" 1>&2
     exit 0
 fi
 
@@ -23,7 +23,7 @@ tags=("cat" "dog" "rabbit" "snake" "baseball" "soccer" "football" "tennis" "cycl
 attributes=("XS" "S" "M" "L" "XL" "Red" "Blue" "Ÿellow" "Green" "Purple" "Pink" "Black" "White" "Leather" "Silk" "Cotton" "Wool" "Canvas" "Fleece" "Denim" "Satin")
 
 #write csv header to file
-echo "post_title,post_content,sku,post_status,categories,tags,attributes,regular_price,sale_price,visibility,is_in_stock,stock,images,tax:product_type,tax:product_cat,tax:product_tag" >> $2.csv
+echo "post_title,post_content,sku,post_status,categories,tags,attributes,regular_price,sale_price,visibility,is_in_stock,stock,images,tax:product_type,tax:product_cat,tax:product_tag" >> $3.csv
 
 while [ "$X" -lt "$1" ]
 do
@@ -68,10 +68,10 @@ do
     post_title=$post_title_adj" "$post_title_noun
     
     #randomize content
-    post_content=$(gshuf -n25 /usr/share/dict/words)
+    post_content=$(gshuf -n$2 /usr/share/dict/words)
     
     #set SKU
-    sku_rand=$(jot -r 1 10000 99999)
+    sku_rand=$(jot -r 1 100000 999999)
     sku="WOO-SQR-"$sku_rand
     
     #set post status
@@ -106,7 +106,7 @@ do
     tax_product_tag="woo_tag"
     
     #write line to csv file
-    echo $post_title,$post_content,$sku,$post_status,$category,$product_tag,$product_attr,$regular_price,$sale_price,$visibility,$is_in_stock,$stock,$images,$tax_product_type,$tax_product_cat,$tax_product_tag >> $2.csv
+    echo $post_title,$post_content,$sku,$post_status,$category,$product_tag,$product_attr,$regular_price,$sale_price,$visibility,$is_in_stock,$stock,$images,$tax_product_type,$tax_product_cat,$tax_product_tag >> $3.csv
     
     #show product counter
     echo -ne "$X"'\r'
@@ -114,4 +114,4 @@ do
     let "X = X + 1"
 done
 
-echo "Finished generating $1 products in file $2.csv!" 1>&2
+echo "Finished generating $1 products in file $3.csv!" 1>&2
